@@ -24,7 +24,7 @@ export const newCommentApi = `${commentUrl}/new`;
 export const allCommentApi = `${commentUrl}/all-comment`;
 export const deleteCommentApi = `${commentUrl}`;
 
-// like route;
+// like route;..
 
 export const likePostApi = `${likeUrl}/new`;
 export const likeListApi = `${likeUrl}`;
