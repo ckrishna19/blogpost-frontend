@@ -48,7 +48,7 @@ const Register = () => {
         withCredentials: true,
       });
       if (data.statusCode === 201) {
-        localStorage.setItem("loggedInUser", data.data);
+        localStorage.setItem("loggedInUser", JSON.stringify(data.data));
         dispatch(fetchAuth(data.data));
         setUserInfo({});
         navigate("/");

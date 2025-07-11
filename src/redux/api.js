@@ -1,4 +1,5 @@
-const baseUrl = "https://blogpost-backend-c59e.onrender.com";
+const baseUrl = "https://blogpost-backend-c59e.onrender.com/api";
+//https://blogpost-backend-c59e.onrender.com
 
 const userUrl = `${baseUrl}/user`;
 const postUrl = `${baseUrl}/post`;
@@ -24,7 +25,7 @@ export const newCommentApi = `${commentUrl}/new`;
 export const allCommentApi = `${commentUrl}/all-comment`;
 export const deleteCommentApi = `${commentUrl}`;
 
-// like route;..
+// like route;
 
 export const likePostApi = `${likeUrl}/new`;
 export const likeListApi = `${likeUrl}`;
