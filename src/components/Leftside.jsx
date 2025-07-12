@@ -25,9 +25,7 @@ import { useEffect } from "react";
 import { persistor } from "../redux/store";
 
 const Leftside = () => {
-  const { loadingUser, error, userInfo, loading } = useSelector(
-    (state) => state?.authInfo
-  );
+  const { error, userInfo, loading } = useSelector((state) => state?.authInfo);
   const dispatch = useDispatch();
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);

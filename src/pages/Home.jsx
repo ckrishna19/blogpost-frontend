@@ -2,8 +2,13 @@ import React, { useCallback, useState } from "react";
 import Header from "../components/Header";
 import Leftside from "../components/Leftside";
 import Main from "../components/Main";
+import { useEffect } from "react";
 
 const Home = () => {
+  useEffect(() => {
+    document.title = "Home";
+  }, []);
+
   const [showModal, setShowModal] = useState(false);
   const closeModal = useCallback(() => {
     setShowModal((pre) => !pre);

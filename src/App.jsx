@@ -20,7 +20,6 @@ import createConnection from "./utils/createConnection";
 const App = () => {
   const { userInfo } = useSelector((state) => state?.authInfo || {});
   const dispatch = useDispatch();
-
   return (
     <BrowserRouter>
       <Suspense fallback={<Spinner />}>

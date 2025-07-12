@@ -11,17 +11,20 @@ import {
   fetchLoading,
 } from "../redux/slices/authSlice";
 const Register = () => {
+  useEffect(() => {
+    document.title = " Blogs Register";
+  }, []);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state?.authInfo ?? {});
 
-  console.log({ loading, error });
   useEffect(() => {
     let timeOut;
     if (error) {
       timeOut = setTimeout(() => {
         dispatch(clearError());
-      }, 5000);
+      }, 3000);
     }
     return () => {
       if (timeOut) clearTimeout(timeOut);

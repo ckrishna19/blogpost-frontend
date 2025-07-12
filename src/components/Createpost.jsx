@@ -83,6 +83,12 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { newPost } from "../redux/actions/postAction";
 import { createPostApi } from "../redux/api";
+import {
+  createPost,
+  fetchError,
+  fetchPostLoading,
+} from "../redux/slices/postSlice";
+import axios from "axios";
 // --- Existing LoginPage and RegisterPage code remains unchanged ---
 
 // --- Existing LoginPage and RegisterPage code remains unchanged ---
@@ -94,8 +100,7 @@ const CreatePost = ({ closeModal }) => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const dispatch = useDispatch();
-  const post = useSelector((state) => state?.post);
-  console.log(post);
+  const { loading } = useSelector((state) => state?.post);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -109,16 +114,26 @@ const CreatePost = ({ closeModal }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("text", text);
-    formData.append("image", image);
-    dispatch(newPost(formData, createPostApi));
-    setImage(null);
-    setPreview(null);
-    setText("");
-    closeModal();
+    if (image) formData.append("image", image);
+    dispatch(fetchPostLoading());
+    try {
+      const { data } = await axios.post(createPostApi, formData, {
+        withCredentials: true,
+      });
+      if (data?.statusCode === 201) {
+        dispatch(createPost(data?.data));
+        setImage(null);
+        setPreview(null);
+        setText("");
+        closeModal();
+      }
+    } catch (error) {
+      dispatch(fetchError(error?.response?.data?.message));
+    }
   };
 
   return (
@@ -171,7 +186,7 @@ const CreatePost = ({ closeModal }) => {
               />
             </label>
             <button type="submit" className="px-4 py-2 text-sm cursor-pointer">
-              {post?.loading === true ? "Loading..." : "Post"}
+              {loading === true ? "Loading..." : "Post"}
             </button>
           </div>
         </form>

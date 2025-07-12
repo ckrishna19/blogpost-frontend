@@ -3,12 +3,33 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions/userAction";
 import { loginUser } from "../redux/api";
-import { fetchAuth, fetchError, fetchLoading } from "../redux/slices/authSlice";
+import {
+  clearError,
+  fetchAuth,
+  fetchError,
+  fetchLoading,
+} from "../redux/slices/authSlice";
 import axios from "axios";
 const Login = () => {
+  useEffect(() => {
+    document.title = "Blogs Login";
+  }, []);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state?.authInfo ?? {});
+
+  useEffect(() => {
+    let timeOut;
+    if (error) {
+      timeOut = setTimeout(() => {
+        dispatch(clearError());
+      }, 3000);
+    }
+    return () => {
+      if (timeOut) clearTimeout(timeOut);
+    };
+  }, [error, dispatch]);
 
   const [userInfo, setUserInfo] = useState({
     email: "",
@@ -28,20 +49,21 @@ const Login = () => {
       const { data } = await axios.post(loginUser, userInfo, {
         withCredentials: true,
       });
-      if (data.statusCode === 201) {
-        localStorage.setItem("loggedInUser", JSON.stringify(data.data));
-        dispatch(fetchAuth(data.data));
+      if (data?.statusCode === 201) {
+        localStorage.setItem("loggedInUser", JSON.stringify(data?.data));
+        dispatch(fetchAuth(data?.data));
         navigate("/");
         setUserInfo({});
       }
     } catch (error) {
-      fetchError(error.response.data.message);
+      dispatch(fetchError(error?.response?.data?.message));
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen ">
       <div className=" p-8 rounded-2xl shadow-md w-full max-w-md">
+        {error && <p>{error}</p>}
         <h2 className="text-2xl font-bold mb-6 text-center">
           Login to Your Account
         </h2>
