@@ -14,19 +14,12 @@ const Register = lazy(() => import("./pages/Register"));
 
 const Login = lazy(() => import("./pages/Login"));
 const Home = lazy(() => import("./pages/Home"));
-import { fetchSocket } from "./redux/slices/authSlice";
-import io from "socket.io-client";
-import createConnection from "./utils/createConnection";
+
 const App = () => {
-  const { userInfo } = useSelector((state) => state?.authInfo || {});
-  const dispatch = useDispatch();
   return (
     <BrowserRouter>
       <Suspense fallback={<Spinner />}>
         <Routes>
-          {/* <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} /> */}
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
           </Route>

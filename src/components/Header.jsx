@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { IoIosCreate } from "react-icons/io";
 
 const Header = ({ openModal }) => {
-  const auth = useSelector((state) => state?.authInfo);
+  const { user } = useSelector((state) => state?.user || {});
 
   return (
     <main className="bg-[#A9DEF9] h-20 flex items-center fixed left-0 right-0 w-full shadow shadow-black">
@@ -36,16 +36,16 @@ const Header = ({ openModal }) => {
             <div className="flex">
               <div className="bg-pink-200 h-12 rounded-md shadow-black shadow-md">
                 <img
-                  src={auth?.userInfo?.photoUrl?.url}
+                  src={user?.photoUrl?.url}
                   alt="profile image"
                   className="h-full aspect-square rounded-md cursor-pointer"
                 />
               </div>
               <div className="block ml-3 items-center">
                 <p className=" font-semibold text-sm">
-                  {auth?.userInfo?.firstName + " " + auth?.userInfo?.lastName}
+                  {user?.firstName + " " + user?.lastName}
                 </p>
-                <p className="text-xs font-light">{auth?.userInfo?.email}</p>
+                <p className="text-xs font-light">{user?.email}</p>
               </div>
             </div>
             <div className="flex gap-x-3">

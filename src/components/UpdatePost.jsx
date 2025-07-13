@@ -4,6 +4,7 @@ import { updateImageApi, updatePostApi } from "../redux/api";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePostAction } from "../redux/actions/postAction";
 import {
+  clearPostError,
   fetchError,
   fetchPostLoading,
   updatePostSlice,
@@ -26,6 +27,18 @@ export const UpdatePost = ({
   };
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    let timeOut;
+    if (error) {
+      timeOut = setTimeout(() => {
+        dispatch(clearPostError());
+      }, 3000);
+    }
+    return () => {
+      if (timeOut) clearTimeout(timeOut);
+    };
+  }, [error, dispatch]);
 
   useEffect(() => {
     if (postImage) {
@@ -84,6 +97,7 @@ export const UpdatePost = ({
           ✕
         </button>
         <h2 className="text-xl font-semibold mb-4 text-center">Update Post</h2>
+        {error && <p className="text-xs text-red-500 my-1">{error}</p>}
         <form onSubmit={handleUpdate} className="space-y-4">
           <textarea
             className="w-full resize-none border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"

@@ -7,28 +7,23 @@ import { MdTrendingUp } from "react-icons/md";
 import { ImSwitch } from "react-icons/im";
 import { IoSettings } from "react-icons/io5";
 import { FaLock } from "react-icons/fa";
-import {
-  fetchAuth,
-  fetchError,
-  getMyProfile,
-  logOut,
-  fetchLoadingUser,
-} from "../redux/slices/authSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/actions/userAction";
-import { getMyProfileApi, logout, updateImageApi } from "../redux/api";
+import { logout } from "../redux/api";
 
 import axios from "axios";
 import Modal from "../utils/Modal";
-import { fetchLoading } from "../redux/slices/authSlice";
 import { useEffect } from "react";
 import { persistor } from "../redux/store";
+import UpdateImageModal from "./UpdateImage";
+import { useNavigate } from "react-router-dom";
 
 const Leftside = () => {
-  const { error, userInfo, loading } = useSelector((state) => state?.authInfo);
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state?.user || {});
+  const { loading } = useSelector((state) => state?.authInfo || {});
   const dispatch = useDispatch();
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const onClose = (e) => {
@@ -38,99 +33,35 @@ const Leftside = () => {
   const handleLogout = async () => {
     dispatch(logoutUser(logout));
     localStorage.removeItem("loggedInUser");
+    navigate("/login");
     await persistor.purge();
   };
 
-  useEffect(() => {
-    const MyProfile = async () => {
-      dispatch(fetchLoading());
-      try {
-        const { data } = await axios.get(getMyProfileApi, {
-          withCredentials: true,
-        });
-        dispatch(getMyProfile(data.data));
-      } catch (error) {
-        dispatch(fetchError(error.response.data.message));
-      }
-    };
-    MyProfile();
-  }, []);
+  // useEffect(() => {
+  //   const MyProfile = async () => {
+  //     dispatch(fetchLoading());
+  //     try {
+  //       const { data } = await axios.get(getMyProfileApi, {
+  //         withCredentials: true,
+  //       });
+  //       dispatch(getMyProfile(data.data));
+  //     } catch (error) {
+  //       dispatch(fetchError(error.response.data.message));
+  //     }
+  //   };
+  //   MyProfile();
+  // }, []);
 
-  const updateImage = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("image", image);
-    dispatch(fetchLoadingUser());
-    try {
-      const { data } = await axios.patch(updateImageApi, formData, {
-        withCredentials: true,
-      });
-      if (data.statusCode === 201) {
-        dispatch(fetchAuth(data.data));
-        setPreview(null);
-        setShowModal(false);
-      }
-    } catch (error) {
-      dispatch(fetchError(error.response.data.message));
-    }
-  };
-  const handleChangeImage = (e) => {
-    const file = e.target.files[0];
-    file && setImage(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  };
   return (
     <main className="w-1/6 bg-white fixed left-0 top-21 h-full ">
-      {showModal && (
-        <Modal onClose={onClose}>
-          {error && <p>{error}</p>}
-          <label
-            hidden={preview}
-            htmlFor="image"
-            className="text-xs rounded text-blue-500 cursor-pointer"
-          >
-            Upload
-          </label>
-          <input
-            type="file"
-            name="image"
-            id="image"
-            hidden
-            onChange={handleChangeImage}
-          />
-          {preview && (
-            <>
-              <img src={preview} className="w-60 aspect-video" />
-              <button
-                onClick={updateImage}
-                className="cursor-pointer mt-2 border rounded-md px-2  py-1"
-              >
-                {loadingUser ? "Uploading...." : "Upload"}
-              </button>
-              <button
-                onClick={() => setPreview(null)}
-                className="cursor-pointer mt-2 border rounded-md px-2  py-1 ml-3"
-              >
-                Remove
-              </button>
-            </>
-          )}
-        </Modal>
-      )}
+      {showModal && <UpdateImageModal onClose={onClose} />}
       <main className="w-[90%] mx-auto py-2">
         <section className="flex-col flex gap-y-2 items-center justify-center">
           <article className="">
             <aside className="w-24 relative">
               <img
                 src={
-                  userInfo?.photoUrl?.url ??
+                  user?.photoUrl?.url ??
                   "https://png.pngtree.com/png-vector/20231019/ourmid/pngtree-user-profile-avatar-png-image_10211467.png"
                 }
                 alt="user profile"
@@ -144,7 +75,7 @@ const Leftside = () => {
               Update image
             </button>
             <p className="text-md font-semibold">
-              {userInfo?.firstName} {userInfo?.lastName}
+              {user?.firstName} {user?.lastName}
             </p>
           </article>
           <article className="">

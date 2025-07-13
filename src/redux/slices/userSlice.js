@@ -11,7 +11,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    loadingUser: (state) => {
+    loadingUserSlice: (state) => {
       state.loading = true;
     },
     fetchUserList: (state, { payload }) => {
@@ -23,9 +23,30 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = payload;
     },
+    getMyProfile: (state, { payload }) => {
+      state.loading = false;
+      state.user = payload;
+      state.error = null;
+    },
+    updateImageSlice: (state, { payload }) => {
+      state.loading = false;
+      state.user = payload;
+      state.error = null;
+    },
+    clearUserError: (state) => {
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 
-export const { fetchUserError, fetchUserList, loadingUser } = userSlice.actions;
+export const {
+  fetchUserError,
+  fetchUserList,
+  loadingUserSlice,
+  updateImageSlice,
+  clearUserError,
+  getMyProfile,
+} = userSlice.actions;
 
 export default userSlice.reducer;

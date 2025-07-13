@@ -10,6 +10,7 @@ import {
   fetchLoading,
 } from "../redux/slices/authSlice";
 import axios from "axios";
+import { getMyProfile } from "../redux/slices/userSlice";
 const Login = () => {
   useEffect(() => {
     document.title = "Blogs Login";
@@ -50,10 +51,11 @@ const Login = () => {
         withCredentials: true,
       });
       if (data?.statusCode === 201) {
+        navigate("/");
         localStorage.setItem("loggedInUser", JSON.stringify(data?.data));
         dispatch(fetchAuth(data?.data));
-        navigate("/");
-        setUserInfo({});
+        dispatch(getMyProfile(data?.data));
+        setUserInfo({ email: "", password: "" });
       }
     } catch (error) {
       dispatch(fetchError(error?.response?.data?.message));
@@ -63,10 +65,10 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen ">
       <div className=" p-8 rounded-2xl shadow-md w-full max-w-md">
-        {error && <p>{error}</p>}
         <h2 className="text-2xl font-bold mb-6 text-center">
           Login to Your Account
         </h2>
+        {error && <p className="text-xs text-red-500 my-1">{error} </p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">

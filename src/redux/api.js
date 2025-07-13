@@ -4,7 +4,6 @@ const baseUrl =
     : "https://blogpost-backend-c59e.onrender.com/api";
 //https://blogpost-backend-c59e.onrender.com
 
-console.log(import.meta.env.DEV);
 const userUrl = `${baseUrl}/user`;
 const postUrl = `${baseUrl}/post`;
 const commentUrl = `${baseUrl}/comment`;

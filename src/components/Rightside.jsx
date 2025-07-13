@@ -5,7 +5,7 @@ import { userListApi } from "../redux/api";
 
 const Rightside = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state?.user?.userList);
+  const { userList: users } = useSelector((state) => state?.user || {});
 
   useEffect(() => {
     dispatch(userList(userListApi));
@@ -16,8 +16,8 @@ const Rightside = () => {
       <main className=" mx-auto flex flex-col gap-y-2">
         <section className="bg-white p-2 flex flex-col gap-y-3 rounded-md">
           <p className="text-[#FF5A60]">People you may know</p>
-          {user.length > 0 &&
-            user.map((u) => (
+          {users?.length > 0 &&
+            users.map((u) => (
               <aside className="flex items-center gap-x-2" key={u._id}>
                 <div className="w-16 aspect-square rounded-md bg-pink-200">
                   <img

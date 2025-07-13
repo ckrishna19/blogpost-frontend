@@ -10,6 +10,7 @@ import {
   fetchError,
   fetchLoading,
 } from "../redux/slices/authSlice";
+import { getMyProfile } from "../redux/slices/userSlice";
 const Register = () => {
   useEffect(() => {
     document.title = " Blogs Register";
@@ -52,8 +53,15 @@ const Register = () => {
       });
       if (data.statusCode === 201) {
         localStorage.setItem("loggedInUser", JSON.stringify(data.data));
-        dispatch(fetchAuth(data.data));
-        setUserInfo({});
+        dispatch(fetchAuth(data?.data));
+        dispatch(getMyProfile(data?.data));
+        setUserInfo({
+          email: "",
+          password: "",
+          firstName: "",
+          lastName: "",
+          confirmPassword: "",
+        });
         navigate("/");
       }
     } catch (error) {
@@ -74,7 +82,7 @@ const Register = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">
           Create an Account
         </h2>
-        {error && <p>{error} </p>}
+        {error && <p className="text-xs text-red-500 my-1">{error} </p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-x-2">
             <div>

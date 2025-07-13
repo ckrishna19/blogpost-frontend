@@ -11,15 +11,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { allCommentApi, newCommentApi } from "../redux/api";
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+
 import { MdDelete } from "react-icons/md";
 import { deleteCommentApi } from "../redux/api";
 import ConfirmDelete from "../utils/ConfirmDelete";
-import createConnection from "../utils/createConnection";
 // functions
 
 const Comment = ({ id, postedBy, handleDeleteTheComment, handleAddCount }) => {
-  const socket = createConnection();
   const dispatch = useDispatch();
   const {
     commentList,
@@ -32,14 +30,6 @@ const Comment = ({ id, postedBy, handleDeleteTheComment, handleAddCount }) => {
 
   const { userInfo } = useSelector((state) => state?.authInfo || {});
 
-  const truncate = (str, maxLength) => {
-    if (str.length >= maxLength) {
-      const shortString = str.slice(0, maxLength);
-
-      return `${shortString}...`;
-    }
-    return str;
-  };
   const [text, setComment] = useState("");
   const commentRef = useRef();
   const [deleteComment, setDeleteComment] = useState(false);
@@ -60,7 +50,6 @@ const Comment = ({ id, postedBy, handleDeleteTheComment, handleAddCount }) => {
       });
 
       if (data?.data) {
-        socket.emit("write-comment", { postId: id, comment: data.data });
         dispatch(createComment({ postId: id, comment: data?.data }));
         setComment("");
         handleAddCount();
@@ -91,12 +80,6 @@ const Comment = ({ id, postedBy, handleDeleteTheComment, handleAddCount }) => {
     };
     getAllComments();
   }, [dispatch, id, commentMap[id]?.length]);
-
-  useEffect(() => {
-    socket?.on("rcv-comment", (data) => {
-      console.log("inside use effect:", data);
-    });
-  }, []);
 
   // const deleteComments = (id) => {
   //   dispatch(deleteCommentAction(`${deleteCommentApi}/${id}`, id));

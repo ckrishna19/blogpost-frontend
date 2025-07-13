@@ -47,14 +47,10 @@ const Post = ({
   // state and redux
   const dispatch = useDispatch();
   const [openComment, setOpenComment] = useState(false);
-  const [count, setCount] = useState(commentCount);
+
   const { userInfo } = useSelector((state) => state?.authInfo || {});
-  const { loading, error } = useSelector((state) => state.post);
-  const { commentMap } = useSelector((state) => state?.comment || {});
+  const { loading, error } = useSelector((state) => state?.post || {});
   const { likeMap } = useSelector((state) => state?.like);
-  //  const [updateLike, setUpdateLike] = useState(likeCount);
-  const [liked, setLiked] = useState(likedByIds?.includes(userInfo?._id));
-  const [updateLike, setUpdateLike] = useState(likeCount);
   const [updatePost, setUpdatePost] = useState(false);
   const [deletePost, setDeletePost] = useState(false);
 
@@ -81,35 +77,6 @@ const Post = ({
     setDeletePost((pre) => !pre);
   };
 
-  const handleLikePost = async (id) => {
-    dispatch(fetchLikeLoading());
-    try {
-      const { data } = await axios.post(
-        likePostApi,
-        { postId: id },
-        { withCredentials: true }
-      );
-      console.log(data?.data);
-      dispatch(likePostByUser({ postId: id, likedBy: data?.data.likedBy }));
-    } catch (error) {
-      dispatch(fetchLikeError(error?.response?.data?.message));
-    }
-  };
-
-  const handleUnLikePost = async (id) => {
-    dispatch(fetchLikeLoading());
-    try {
-      const { data } = await axios.delete(`${unLikePostApi}/${id}`, {
-        withCredentials: true,
-      });
-      if (data.statusCode === 201) {
-        dispatch(unLikePost({ postId: id, unLikedBy: userInfo?._id }));
-      }
-    } catch (error) {
-      dispatch(fetchError(error.response.data.message));
-    }
-  };
-
   const handleAddCount = useCallback(() => {
     setCount((pre) => pre++);
   }, []);
@@ -128,22 +95,22 @@ const Post = ({
 
   // fetch like count,
 
-  useEffect(() => {
-    const likeFetch = async () => {
-      dispatch(fetchLikeLoading());
-      try {
-        const { data } = await axios.get(`${likeListApi}/${_id}`, {
-          withCredentials: true,
-        });
-        const likedBy = data?.data.map((x) => x.likedBy);
+  // useEffect(() => {
+  //   const likeFetch = async () => {
+  //     dispatch(fetchLikeLoading());
+  //     try {
+  //       const { data } = await axios.get(`${likeListApi}/${_id}`, {
+  //         withCredentials: true,
+  //       });
+  //       const likedBy = data?.data.map((x) => x.likedBy);
 
-        dispatch(fetchLikeList({ postId: id, likedBy }));
-      } catch (error) {
-        dispatch(fetchLikeError(error?.response?.data?.message));
-      }
-    };
-    likeFetch();
-  }, [dispatch, _id, userInfo?._id]);
+  //       dispatch(fetchLikeList({ postId: id, likedBy }));
+  //     } catch (error) {
+  //       dispatch(fetchLikeError(error?.response?.data?.message));
+  //     }
+  //   };
+  //   likeFetch();
+  // }, [dispatch, _id, userInfo?._id]);
 
   // jsx return..
 
@@ -206,14 +173,7 @@ const Post = ({
         <section className="flex justify-around mt-4 items-center text-xs">
           <div className="flex gap-x-1 items-end">
             <p className="text-xs">{likeMap[_id]?.length}</p>
-            <button
-              className="cursor-pointer"
-              onClick={() =>
-                likeMap[_id]?.includes(userInfo?._id)
-                  ? handleUnLikePost(_id)
-                  : handleLikePost(_id)
-              }
-            >
+            <button className="cursor-pointer">
               {likeMap[_id]?.includes(userInfo?._id) ? (
                 <AiFillLike size={16} className="text-blue-600" />
               ) : (
@@ -225,7 +185,6 @@ const Post = ({
             className=" cursor-pointer text-xs"
             onClick={() => handleOpenComment(_id)}
           >
-            {commentMap[_id]?.length}
             comments
           </button>
         </section>
